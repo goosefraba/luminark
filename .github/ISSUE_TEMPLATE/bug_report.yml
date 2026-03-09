@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a bug in Luminark
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include exact steps and sample files if relevant.
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "macOS 15.x"
+  - type: input
+    id: luminark
+    attributes:
+      label: Luminark version / commit
+      placeholder: "main / commit SHA"
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
