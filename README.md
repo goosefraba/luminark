@@ -2,6 +2,10 @@
 
 Luminark is a native macOS markdown reader with glassy window chrome, dark and light themes, strong typography, syntax-highlighted code blocks, drag-and-drop file opening, and focused multi-window reading.
 
+## Preview
+
+![Luminark preview](docs/luminark-preview.png)
+
 ## Highlights
 
 - Native macOS app built with SwiftUI and WebKit
