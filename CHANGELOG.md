@@ -6,6 +6,18 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.4] - 2026-03-10
+
+### Fixed
+
+- Repaired packaged app bundle layout so release builds use a standard `Contents/Resources` resource location
+- Re-signed packaged release apps after bundling so the shipped `.app` is structurally valid on disk
+- Cleaned release zip output to avoid extra macOS metadata files
+
+### Changed
+
+- Added installation notes for the current unsigned, non-notarized release flow
+
 ## [0.1.3] - 2026-03-10
 
 ### Changed

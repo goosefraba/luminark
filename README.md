@@ -24,6 +24,16 @@ Download the latest packaged app from the [GitHub Releases page](https://github.
 - Apple Silicon Macs: use the `arm64` build
 - Intel Macs: use the `x86_64` build
 
+The current releases are not Developer ID signed or notarized yet.
+
+- If macOS blocks the app on first launch, right-click `Luminark.app` and choose `Open`
+- If needed, use `System Settings > Privacy & Security > Open Anyway`
+- Terminal fallback:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Luminark.app
+```
+
 ### Run from source
 
 ```bash

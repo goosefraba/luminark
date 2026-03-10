@@ -2,6 +2,39 @@ import AppKit
 import SwiftUI
 import WebKit
 
+private enum WebRendererResources {
+    static let bundleName = "Luminark_LuminarkApp"
+
+    static func rendererURL() -> URL? {
+        bundle()?.url(forResource: "renderer", withExtension: "html")
+    }
+
+    private static func bundle() -> Bundle? {
+        for candidate in candidateBundles() {
+            guard let bundle = Bundle(url: candidate) else {
+                continue
+            }
+
+            if bundle.url(forResource: "renderer", withExtension: "html") != nil {
+                return bundle
+            }
+        }
+
+        return nil
+    }
+
+    private static func candidateBundles() -> [URL] {
+        let bundleDirectory = "\(bundleName).bundle"
+        let mainBundle = Bundle.main
+
+        return [
+            mainBundle.resourceURL?.appendingPathComponent(bundleDirectory),
+            mainBundle.bundleURL.appendingPathComponent(bundleDirectory),
+            Bundle.module.bundleURL,
+        ].compactMap { $0 }
+    }
+}
+
 enum WebTheme: String {
     case light
     case dark
@@ -59,7 +92,7 @@ struct MarkdownWebView: NSViewRepresentable {
                 return
             }
 
-            guard let rendererURL = Bundle.module.url(forResource: "renderer", withExtension: "html") else {
+            guard let rendererURL = WebRendererResources.rendererURL() else {
                 let fallbackHTML = """
                 <!doctype html>
                 <html>

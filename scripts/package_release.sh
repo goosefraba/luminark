@@ -107,10 +107,15 @@ for ARCH in arm64 x86_64; do
 PLIST
 
   cp "$ROOT_DIR/.build/${ARCH}-apple-macosx/release/$APP_NAME" "$APP_DIR/Contents/MacOS/$APP_NAME"
-  cp -R "$ROOT_DIR/.build/${ARCH}-apple-macosx/release/${APP_NAME}_LuminarkApp.bundle" "$APP_DIR/${APP_NAME}_LuminarkApp.bundle"
+  cp -R \
+    "$ROOT_DIR/.build/${ARCH}-apple-macosx/release/${APP_NAME}_LuminarkApp.bundle" \
+    "$APP_DIR/Contents/Resources/${APP_NAME}_LuminarkApp.bundle"
   chmod +x "$APP_DIR/Contents/MacOS/$APP_NAME"
+  xattr -cr "$APP_DIR"
+  codesign --force --deep --sign - --timestamp=none "$APP_DIR"
+  xattr -dr com.apple.provenance "$APP_DIR" 2>/dev/null || true
 
-  ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$RELEASE_DIR/${APP_NAME}-${VERSION}-macos-${ARCH}.zip"
+  ditto -c -k --norsrc --keepParent "$APP_DIR" "$RELEASE_DIR/${APP_NAME}-${VERSION}-macos-${ARCH}.zip"
 done
 
 ls -lh "$RELEASE_DIR"/*.zip
