@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 struct LauncherView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var appModel: AppModel
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var updater: AppUpdater
@@ -14,7 +15,7 @@ struct LauncherView: View {
 
     var body: some View {
         ZStack {
-            AmbientBackdrop(theme: .light)
+            AmbientBackdrop(theme: effectiveBackdropTheme)
 
             VStack(spacing: 18) {
                 Image(systemName: "doc.text.magnifyingglass")
@@ -43,15 +44,15 @@ struct LauncherView: View {
             .frame(maxWidth: 460)
             .background {
                 RoundedRectangle(cornerRadius: 30, style: .continuous)
-                    .fill(.regularMaterial)
+                    .fill(panelFill)
                     .overlay(
                         RoundedRectangle(cornerRadius: 30, style: .continuous)
                             .strokeBorder(
-                                isDropTargeted ? Color.accentColor.opacity(0.85) : Color.white.opacity(0.22),
+                                isDropTargeted ? Color.accentColor.opacity(0.85) : panelStrokeColor,
                                 style: StrokeStyle(lineWidth: 1.4, dash: [10, 8])
                             )
                     )
-                    .shadow(color: .black.opacity(0.16), radius: 28, y: 22)
+                    .shadow(color: shadowColor, radius: 28, y: 22)
             }
             .padding(24)
         }
@@ -101,6 +102,53 @@ struct LauncherView: View {
 
             openViewerWindows(for: urls)
             dismiss()
+        }
+    }
+
+    private var effectiveBackdropTheme: WebTheme {
+        switch settings.theme {
+        case .light:
+            return .light
+        case .dark:
+            return .dark
+        case .system:
+            return colorScheme == .dark ? .dark : .light
+        }
+    }
+
+    private var panelFill: AnyShapeStyle {
+        switch effectiveBackdropTheme {
+        case .light:
+            return AnyShapeStyle(.regularMaterial)
+        case .dark:
+            return AnyShapeStyle(
+                LinearGradient(
+                    colors: [
+                        Color.white.opacity(0.12),
+                        Color.white.opacity(0.07),
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+        }
+    }
+
+    private var panelStrokeColor: Color {
+        switch effectiveBackdropTheme {
+        case .light:
+            return Color.white.opacity(0.22)
+        case .dark:
+            return Color.white.opacity(0.12)
+        }
+    }
+
+    private var shadowColor: Color {
+        switch effectiveBackdropTheme {
+        case .light:
+            return .black.opacity(0.16)
+        case .dark:
+            return .black.opacity(0.34)
         }
     }
 

@@ -6,6 +6,12 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.6] - 2026-03-10
+
+### Fixed
+
+- Made the launcher drop-state window respect the active light/dark appearance instead of always rendering a light-toned panel
+
 ## [0.1.5] - 2026-03-10
 
 ### Added
