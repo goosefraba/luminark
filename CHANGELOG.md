@@ -6,6 +6,12 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.8] - 2026-03-10
+
+### Fixed
+
+- Fixed a startup race where Finder `Open With` and double-click launches could arrive before SwiftUI had registered its file-open observer, causing the file to be dropped and only the launcher to appear
+
 ## [0.1.7] - 2026-03-10
 
 ### Fixed
