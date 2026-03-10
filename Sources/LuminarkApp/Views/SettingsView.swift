@@ -67,8 +67,8 @@ struct SettingsView: View {
                     .disabled(updater.isChecking)
 
                     if let latestRelease = updater.latestRelease, latestRelease.version != updater.currentVersion {
-                        Button("Download \(latestRelease.version)") {
-                            updater.openLatestReleaseDownload()
+                        Button("View \(latestRelease.version)") {
+                            updater.openLatestReleasePage()
                         }
                     }
                 }

@@ -9,26 +9,6 @@ enum AppReleaseInfo {
     static var currentVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? fallbackVersion
     }
-
-    static var architectureName: String {
-        #if arch(arm64)
-        "arm64"
-        #else
-        "x86_64"
-        #endif
-    }
-}
-
-struct ReleaseAsset: Decodable, Identifiable {
-    let id: Int
-    let name: String
-    let browserDownloadURL: URL
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case browserDownloadURL = "browser_download_url"
-    }
 }
 
 struct ReleaseInfo: Decodable, Identifiable {
@@ -37,7 +17,6 @@ struct ReleaseInfo: Decodable, Identifiable {
     let htmlURL: URL
     let body: String
     let publishedAt: Date?
-    let assets: [ReleaseAsset]
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -45,7 +24,6 @@ struct ReleaseInfo: Decodable, Identifiable {
         case htmlURL = "html_url"
         case body
         case publishedAt = "published_at"
-        case assets
     }
 
     var version: String {
@@ -155,12 +133,12 @@ final class AppUpdater: ObservableObject {
         }
     }
 
-    func openLatestReleaseDownload() {
+    func openLatestReleasePage() {
         guard let latestRelease else {
             return
         }
 
-        openPreferredDownload(for: latestRelease)
+        NSWorkspace.shared.open(latestRelease.htmlURL)
     }
 
     private var dismissedVersion: String? {
@@ -219,8 +197,7 @@ final class AppUpdater: ObservableObject {
     private func presentUpdateAlert(for release: ReleaseInfo) {
         let alert = NSAlert()
         alert.messageText = "Luminark \(release.version) is available"
-        alert.informativeText = "You’re currently on \(currentVersion). Download the latest release for this Mac?"
-        alert.addButton(withTitle: "Download Update")
+        alert.informativeText = "You’re currently on \(currentVersion). Open the GitHub release page to download the latest version manually?"
         alert.addButton(withTitle: "View Release")
         alert.addButton(withTitle: "Later")
         alert.alertStyle = .informational
@@ -229,9 +206,6 @@ final class AppUpdater: ObservableObject {
 
         switch response {
         case .alertFirstButtonReturn:
-            defaults.removeObject(forKey: Keys.dismissedUpdateVersion)
-            openPreferredDownload(for: release)
-        case .alertSecondButtonReturn:
             defaults.removeObject(forKey: Keys.dismissedUpdateVersion)
             NSWorkspace.shared.open(release.htmlURL)
         default:
@@ -246,27 +220,5 @@ final class AppUpdater: ObservableObject {
         alert.addButton(withTitle: "OK")
         alert.alertStyle = .informational
         alert.runModal()
-    }
-
-    private func openPreferredDownload(for release: ReleaseInfo) {
-        if let assetURL = preferredAssetURL(for: release) {
-            NSWorkspace.shared.open(assetURL)
-        } else {
-            NSWorkspace.shared.open(release.htmlURL)
-        }
-    }
-
-    private func preferredAssetURL(for release: ReleaseInfo) -> URL? {
-        let architecture = AppReleaseInfo.architectureName
-
-        if let exactMatch = release.assets.first(where: { $0.name.localizedCaseInsensitiveContains(architecture) }) {
-            return exactMatch.browserDownloadURL
-        }
-
-        if architecture == "x86_64" {
-            return release.assets.first(where: { $0.name.localizedCaseInsensitiveContains("intel") })?.browserDownloadURL
-        }
-
-        return release.assets.first?.browserDownloadURL
     }
 }
