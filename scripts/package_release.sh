@@ -18,9 +18,10 @@ mkdir -p "$RELEASE_DIR"
 for ARCH in arm64 x86_64; do
   swift build -c release --arch "$ARCH" --package-path "$ROOT_DIR"
 
-  APP_DIR="$RELEASE_DIR/${APP_NAME}-${ARCH}.app"
+  STAGING_DIR="$RELEASE_DIR/staging-${ARCH}"
+  APP_DIR="$STAGING_DIR/${APP_NAME}.app"
   ASSET_INFO_PLIST="$(mktemp "$RELEASE_DIR/${APP_NAME}-${ARCH}-asset-info.XXXXXX.plist")"
-  rm -rf "$APP_DIR"
+  rm -rf "$STAGING_DIR"
   mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 
   cat > "$APP_DIR/Contents/Info.plist" <<PLIST
