@@ -6,6 +6,7 @@ struct LauncherView: View {
     @Environment(\.openWindow) private var openWindow
     @EnvironmentObject private var appModel: AppModel
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var updater: AppUpdater
 
     @State private var isImporterPresented = false
     @State private var isDropTargeted = false
@@ -73,6 +74,8 @@ struct LauncherView: View {
             onCompletion: handleImport(result:)
         )
         .task {
+            updater.performStartupCheckIfNeeded()
+
             guard hasProcessedLaunchArguments == false else {
                 return
             }

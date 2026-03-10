@@ -6,6 +6,7 @@ struct ViewerWindowView: View {
 
     @Environment(\.openWindow) private var openWindow
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var updater: AppUpdater
     @Environment(\.colorScheme) private var colorScheme
 
     @StateObject private var viewModel: MarkdownDocumentViewModel
@@ -109,6 +110,7 @@ struct ViewerWindowView: View {
             }
         }
         .onAppear {
+            updater.performStartupCheckIfNeeded()
             areControlsVisible = true
             scheduleControlsHide()
         }

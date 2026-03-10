@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var updater: AppUpdater
 
     var body: some View {
         Form {
@@ -41,6 +42,38 @@ struct SettingsView: View {
                 Slider(value: $settings.fontScale, in: 0.7 ... 1.45)
 
                 Text("Scales body text, headings, code, and document spacing.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.top, 8)
+
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle("Check for updates automatically", isOn: $updater.automaticChecksEnabled)
+
+                HStack {
+                    Text("Current Version")
+                    Spacer()
+                    Text(updater.currentVersion)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+
+                HStack(spacing: 10) {
+                    Button(updater.isChecking ? "Checking…" : "Check for Updates…") {
+                        Task {
+                            await updater.checkForUpdates(userInitiated: true)
+                        }
+                    }
+                    .disabled(updater.isChecking)
+
+                    if let latestRelease = updater.latestRelease, latestRelease.version != updater.currentVersion {
+                        Button("Download \(latestRelease.version)") {
+                            updater.openLatestReleaseDownload()
+                        }
+                    }
+                }
+
+                Text(updater.updateSummary)
                     .font(.callout)
                     .foregroundStyle(.secondary)
             }
