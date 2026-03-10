@@ -4,7 +4,7 @@ import Foundation
 enum AppReleaseInfo {
     static let repositoryOwner = "goosefraba"
     static let repositoryName = "luminark"
-    static let fallbackVersion = "0.1.6"
+    static let fallbackVersion = "0.1.7"
 
     static var currentVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? fallbackVersion

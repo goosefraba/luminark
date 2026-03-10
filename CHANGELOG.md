@@ -6,6 +6,12 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.7] - 2026-03-10
+
+### Fixed
+
+- Fixed macOS Finder `Open With` and double-click launches so markdown files assigned to Luminark open directly instead of showing only the launcher drop zone on cold start
+
 ## [0.1.6] - 2026-03-10
 
 ### Fixed

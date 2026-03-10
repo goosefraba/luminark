@@ -83,13 +83,15 @@ struct LauncherView: View {
             }
 
             hasProcessedLaunchArguments = true
-            let launchURLs = appModel.consumePendingLaunchURLs()
+            let startupURLs = MarkdownFile.filteredSupportedURLs(
+                from: appModel.consumePendingLaunchURLs() + appModel.consumePendingExternalOpenURLs()
+            )
 
-            guard launchURLs.isEmpty == false else {
+            guard startupURLs.isEmpty == false else {
                 return
             }
 
-            openViewerWindows(for: launchURLs)
+            openViewerWindows(for: startupURLs)
 
             try? await Task.sleep(for: .milliseconds(160))
             dismiss()
