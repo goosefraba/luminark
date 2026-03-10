@@ -8,7 +8,7 @@ struct LuminarkApp: App {
     @StateObject private var updater = AppUpdater()
 
     var body: some Scene {
-        WindowGroup("Luminark") {
+        WindowGroup(id: AppWindowCoordinator.launcherSceneID) {
             LauncherView()
                 .environmentObject(appModel)
                 .environmentObject(settings)

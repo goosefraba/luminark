@@ -5,6 +5,7 @@ struct WindowConfigurator: NSViewRepresentable {
     let title: String
     let opacity: Double
     let theme: AppTheme
+    let role: AppWindowRole
 
     func makeNSView(context: Context) -> NSView {
         let view = NSView()
@@ -23,6 +24,7 @@ struct WindowConfigurator: NSViewRepresentable {
             }
 
             window.title = title
+            window.identifier = role.identifier
             window.isOpaque = false
             window.backgroundColor = .clear
             window.alphaValue = CGFloat(opacity)

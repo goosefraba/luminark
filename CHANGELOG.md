@@ -6,6 +6,17 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.5] - 2026-03-10
+
+### Added
+
+- Shipped the new dark metallic cyan `LM` app icon through the packaged macOS app bundle
+
+### Fixed
+
+- Brought the launcher window back to the front when the last viewer window closes
+- Compiled the app icon asset catalog into packaged release builds so macOS picks up `AppIcon` correctly
+
 ## [0.1.4] - 2026-03-10
 
 ### Fixed

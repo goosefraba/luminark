@@ -11,6 +11,7 @@ ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 RELEASE_DIR="$ROOT_DIR/release-artifacts/$VERSION"
 APP_NAME="Luminark"
 IDENTIFIER="com.goosefraba.luminark"
+ASSET_CATALOG="$ROOT_DIR/Sources/LuminarkApp/Resources/Assets.xcassets"
 
 mkdir -p "$RELEASE_DIR"
 
@@ -18,6 +19,7 @@ for ARCH in arm64 x86_64; do
   swift build -c release --arch "$ARCH" --package-path "$ROOT_DIR"
 
   APP_DIR="$RELEASE_DIR/${APP_NAME}-${ARCH}.app"
+  ASSET_INFO_PLIST="$(mktemp "$RELEASE_DIR/${APP_NAME}-${ARCH}-asset-info.XXXXXX.plist")"
   rm -rf "$APP_DIR"
   mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 
@@ -57,6 +59,8 @@ for ARCH in arm64 x86_64; do
   <string>$APP_NAME</string>
   <key>CFBundleIdentifier</key>
   <string>$IDENTIFIER</string>
+  <key>CFBundleIconName</key>
+  <string>AppIcon</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
@@ -110,6 +114,14 @@ PLIST
   cp -R \
     "$ROOT_DIR/.build/${ARCH}-apple-macosx/release/${APP_NAME}_LuminarkApp.bundle" \
     "$APP_DIR/Contents/Resources/${APP_NAME}_LuminarkApp.bundle"
+  xcrun actool \
+    --compile "$APP_DIR/Contents/Resources" \
+    --platform macosx \
+    --minimum-deployment-target 15.0 \
+    --app-icon AppIcon \
+    --output-partial-info-plist "$ASSET_INFO_PLIST" \
+    "$ASSET_CATALOG" >/dev/null
+  rm -f "$ASSET_INFO_PLIST"
   chmod +x "$APP_DIR/Contents/MacOS/$APP_NAME"
   xattr -cr "$APP_DIR"
   codesign --force --deep --sign - --timestamp=none "$APP_DIR"

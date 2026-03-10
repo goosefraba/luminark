@@ -59,7 +59,8 @@ struct LauncherView: View {
             WindowConfigurator(
                 title: "Luminark",
                 opacity: settings.windowOpacity,
-                theme: settings.theme
+                theme: settings.theme,
+                role: .launcher
             )
         )
         .onDrop(of: [UTType.fileURL.identifier], isTargeted: $isDropTargeted) { providers in

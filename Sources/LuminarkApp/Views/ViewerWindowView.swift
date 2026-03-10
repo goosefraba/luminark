@@ -58,7 +58,8 @@ struct ViewerWindowView: View {
             WindowConfigurator(
                 title: viewModel.title,
                 opacity: settings.windowOpacity,
-                theme: settings.theme
+                theme: settings.theme,
+                role: .viewer
             )
         )
         .fileImporter(
@@ -118,6 +119,7 @@ struct ViewerWindowView: View {
         .onDisappear {
             controlsHideTask?.cancel()
             controlsHideTask = nil
+            revealLauncherIfNeeded()
         }
         .onChange(of: shouldEnableReaderControls) { _, isEnabled in
             if isEnabled {
@@ -215,6 +217,23 @@ struct ViewerWindowView: View {
                     areControlsVisible = false
                 }
             }
+        }
+    }
+
+    private func revealLauncherIfNeeded() {
+        guard viewModel.fileURL != nil else {
+            return
+        }
+
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(120))
+
+            guard AppWindowCoordinator.visibleViewerCount() == 0 else {
+                return
+            }
+
+            openWindow(id: AppWindowCoordinator.launcherSceneID)
+            AppWindowCoordinator.revealLauncher()
         }
     }
 }
