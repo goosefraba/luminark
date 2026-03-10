@@ -17,6 +17,13 @@ Luminark is a native macOS markdown reader with glassy window chrome, dark and l
 
 ## Installation
 
+### Download a release
+
+Download the latest packaged app from the [GitHub Releases page](https://github.com/goosefraba/luminark/releases).
+
+- Apple Silicon Macs: use the `arm64` build
+- Intel Macs: use the `x86_64` build
+
 ### Run from source
 
 ```bash
@@ -45,6 +52,8 @@ swift run Luminark -- Examples/demo.md
 ## Open Source
 
 Luminark is released under the MIT License. See [LICENSE](LICENSE).
+
+Latest release downloads are published on the [Releases page](https://github.com/goosefraba/luminark/releases).
 
 Contributions, bug reports, and feature suggestions are welcome:
 
