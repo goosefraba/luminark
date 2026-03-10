@@ -83,18 +83,14 @@ struct LauncherView: View {
             }
 
             hasProcessedLaunchArguments = true
-            let startupURLs = MarkdownFile.filteredSupportedURLs(
-                from: appModel.consumePendingLaunchURLs() + appModel.consumePendingExternalOpenURLs()
-            )
+            let startupURLs = appModel.consumePendingLaunchURLs()
 
             guard startupURLs.isEmpty == false else {
                 return
             }
 
             openViewerWindows(for: startupURLs)
-
-            try? await Task.sleep(for: .milliseconds(160))
-            dismiss()
+            closeLauncherAndRevealViewer()
         }
         .onChange(of: appModel.externalOpenRequestToken) { _, _ in
             let urls = appModel.consumePendingExternalOpenURLs()
@@ -103,7 +99,7 @@ struct LauncherView: View {
             }
 
             openViewerWindows(for: urls)
-            dismiss()
+            closeLauncherAndRevealViewer()
         }
     }
 
@@ -170,13 +166,22 @@ struct LauncherView: View {
         }
 
         openViewerWindows(for: supportedURLs)
-        dismiss()
+        closeLauncherAndRevealViewer()
         return true
     }
 
     private func openViewerWindows(for urls: [URL]) {
         for url in urls {
             openWindow(value: ViewerRoute(fileURL: url))
+        }
+    }
+
+    private func closeLauncherAndRevealViewer() {
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(160))
+            AppWindowCoordinator.closeLauncherWindows()
+            AppWindowCoordinator.revealViewer()
+            dismiss()
         }
     }
 }

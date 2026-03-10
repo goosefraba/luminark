@@ -6,6 +6,13 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.9] - 2026-03-10
+
+### Fixed
+
+- Fixed Finder and `Open With` markdown launches so the viewer window is brought forward correctly and the launcher no longer remains the apparent result
+- Folded pre-launch file-open events into startup routing while still handling post-launch file-open events through the live observer path
+
 ## [0.1.8] - 2026-03-10
 
 ### Fixed

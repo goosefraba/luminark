@@ -14,8 +14,10 @@ final class AppModel: ObservableObject {
     @Published private(set) var externalOpenRequestToken = 0
 
     init(arguments: [String] = CommandLine.arguments) {
-        pendingLaunchURLs = MarkdownFile.supportedArgumentURLs(from: Array(arguments.dropFirst()))
-        pendingExternalOpenURLs = AppOpenFileQueue.shared.consume()
+        pendingLaunchURLs = MarkdownFile.filteredSupportedURLs(
+            from: MarkdownFile.supportedArgumentURLs(from: Array(arguments.dropFirst()))
+                + AppOpenFileQueue.shared.consume()
+        )
         notificationObserver = NotificationCenter.default.addObserver(
             forName: .luminarkOpenFiles,
             object: nil,

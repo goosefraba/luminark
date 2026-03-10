@@ -28,6 +28,22 @@ enum AppWindowCoordinator {
     }
 
     @MainActor
+    static func revealViewer() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        if let viewerWindow = windows(with: .viewer).last {
+            viewerWindow.makeKeyAndOrderFront(nil)
+        }
+    }
+
+    @MainActor
+    static func closeLauncherWindows() {
+        for window in windows(with: .launcher) {
+            window.close()
+        }
+    }
+
+    @MainActor
     private static func windows(with role: AppWindowRole) -> [NSWindow] {
         NSApp.windows.filter { window in
             window.identifier == role.identifier && window.isVisible
