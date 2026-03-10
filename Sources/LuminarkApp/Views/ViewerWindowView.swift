@@ -5,6 +5,7 @@ struct ViewerWindowView: View {
     private let controlsHideDelayNanoseconds: UInt64 = 1_400_000_000
 
     @Environment(\.openWindow) private var openWindow
+    @EnvironmentObject private var appModel: AppModel
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var updater: AppUpdater
     @Environment(\.colorScheme) private var colorScheme
@@ -127,6 +128,14 @@ struct ViewerWindowView: View {
                 controlsHideTask = nil
                 areControlsVisible = false
             }
+        }
+        .onChange(of: appModel.externalOpenRequestToken) { _, _ in
+            let urls = appModel.consumePendingExternalOpenURLs()
+            guard urls.isEmpty == false else {
+                return
+            }
+
+            _ = handleSelection(urls)
         }
     }
 

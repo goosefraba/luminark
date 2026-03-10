@@ -92,6 +92,15 @@ struct LauncherView: View {
             try? await Task.sleep(for: .milliseconds(160))
             dismiss()
         }
+        .onChange(of: appModel.externalOpenRequestToken) { _, _ in
+            let urls = appModel.consumePendingExternalOpenURLs()
+            guard urls.isEmpty == false else {
+                return
+            }
+
+            openViewerWindows(for: urls)
+            dismiss()
+        }
     }
 
     private func handleImport(result: Result<[URL], Error>) {

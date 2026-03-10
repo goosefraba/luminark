@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct LuminarkApp: App {
+    @NSApplicationDelegateAdaptor(LuminarkAppDelegate.self) private var appDelegate
     @StateObject private var appModel = AppModel()
     @StateObject private var settings = AppSettings()
     @StateObject private var updater = AppUpdater()
@@ -20,6 +21,7 @@ struct LuminarkApp: App {
 
         WindowGroup("Luminark Viewer", for: ViewerRoute.self) { route in
             ViewerWindowView(route: route.wrappedValue)
+                .environmentObject(appModel)
                 .environmentObject(settings)
                 .environmentObject(updater)
                 .preferredColorScheme(settings.theme.colorScheme)
@@ -29,6 +31,7 @@ struct LuminarkApp: App {
 
         Settings {
             SettingsView()
+                .environmentObject(appModel)
                 .environmentObject(settings)
                 .environmentObject(updater)
                 .preferredColorScheme(settings.theme.colorScheme)
