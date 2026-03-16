@@ -12,6 +12,11 @@ All notable changes to Luminark are documented here.
 
 - Fixed a crash when opening markdown files in the packaged app caused by `Bundle.module` calling `fatalError` when the SPM resource bundle could not be found at the expected path
 
+### Added
+
+- ASCII box-drawing diagrams in code blocks are now auto-detected and scaled up to use more of the available page width, centered within the code block
+- Font-scale slider is now significantly faster — style-only changes skip re-parsing and re-highlighting
+
 ## [0.1.9] - 2026-03-10
 
 ### Fixed

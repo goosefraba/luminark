@@ -256,6 +256,17 @@
         padding: 0;
       }
 
+      pre.ascii-diagram {
+        text-align: center;
+        overflow-x: auto;
+      }
+
+      pre.ascii-diagram code {
+        display: inline-block;
+        text-align: left;
+        line-height: 1.32;
+      }
+
       .hljs {
         color: var(--text);
         background: transparent;
@@ -468,20 +479,85 @@
         });
       });
 
+      const BOX_DRAWING_MATCH = /[\u2500-\u257F\u2580-\u259F\u2550-\u256C\u2190-\u2193\u25B2\u25BC\u25B6\u25C0]/g;
+      const MIN_BOX_CHARS = 8;
+      const BOX_DENSITY_THRESHOLD = 0.04;
+      const DIAGRAM_FILL = 0.75;
+      const DIAGRAM_MAX_SCALE = 2.2;
+
+      function isAsciiDiagram(text) {
+        const boxChars = (text.match(BOX_DRAWING_MATCH) || []).length;
+        if (boxChars < MIN_BOX_CHARS) return false;
+        const stripped = text.replace(/\s/g, "").length;
+        return stripped > 0 && (boxChars / stripped) >= BOX_DENSITY_THRESHOLD;
+      }
+
+      function maxLineLength(text) {
+        let max = 0;
+        for (const line of text.split("\n")) {
+          if (line.length > max) max = line.length;
+        }
+        return max;
+      }
+
+      function detectDiagramBlocks() {
+        content.querySelectorAll("pre code").forEach((codeEl) => {
+          const pre = codeEl.parentElement;
+          if (!pre) return;
+          const text = codeEl.textContent || "";
+          if (!isAsciiDiagram(text)) return;
+          pre.classList.add("ascii-diagram");
+          pre.dataset.maxChars = maxLineLength(text);
+        });
+      }
+
+      function scaleDiagramFontSizes() {
+        content.querySelectorAll("pre.ascii-diagram").forEach((pre) => {
+          const codeEl = pre.querySelector("code");
+          if (!codeEl) return;
+
+          codeEl.style.fontSize = "";
+
+          const chars = parseInt(pre.dataset.maxChars, 10);
+          if (!chars || chars < 10) return;
+
+          const padL = parseFloat(getComputedStyle(pre).paddingLeft);
+          const padR = parseFloat(getComputedStyle(pre).paddingRight);
+          const available = pre.clientWidth - padL - padR;
+
+          const baseFontSize = parseFloat(getComputedStyle(codeEl).fontSize);
+          const charWidth = baseFontSize * 0.6;
+          const naturalWidth = chars * charWidth;
+          const scale = (available / naturalWidth) * DIAGRAM_FILL;
+
+          if (scale > 1.05) {
+            codeEl.style.fontSize = (baseFontSize * Math.min(scale, DIAGRAM_MAX_SCALE)) + "px";
+          }
+        });
+      }
+
+      let lastRenderedSource = null;
+
       window.renderMarkdown = function renderMarkdown(source, theme, fontScale) {
         document.documentElement.setAttribute("data-theme", theme);
         document.documentElement.style.setProperty("--font-scale", String(fontScale ?? 1));
-        const html = marked.parse(source ?? "");
-        const safeHtml = DOMPurify.sanitize(html, {
-          USE_PROFILES: { html: true }
-        });
 
-        content.innerHTML = safeHtml;
-        assignHeadingIds();
-        content.querySelectorAll("pre code").forEach((block) => {
-          hljs.highlightElement(block);
-        });
+        if (source !== lastRenderedSource) {
+          lastRenderedSource = source;
+          const html = marked.parse(source ?? "");
+          const safeHtml = DOMPurify.sanitize(html, {
+            USE_PROFILES: { html: true }
+          });
 
+          content.innerHTML = safeHtml;
+          assignHeadingIds();
+          content.querySelectorAll("pre code").forEach((block) => {
+            hljs.highlightElement(block);
+          });
+          detectDiagramBlocks();
+        }
+
+        scaleDiagramFontSizes();
         updateScrollToTopVisibility();
 
         if (window.location.hash) {
