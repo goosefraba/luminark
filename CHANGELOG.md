@@ -6,6 +6,12 @@ All notable changes to Luminark are documented here.
 
 - No unreleased changes yet.
 
+## [0.1.10] - 2026-03-16
+
+### Fixed
+
+- Fixed a crash when opening markdown files in the packaged app caused by `Bundle.module` calling `fatalError` when the SPM resource bundle could not be found at the expected path
+
 ## [0.1.9] - 2026-03-10
 
 ### Fixed

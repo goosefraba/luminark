@@ -30,7 +30,6 @@ private enum WebRendererResources {
         return [
             mainBundle.resourceURL?.appendingPathComponent(bundleDirectory),
             mainBundle.bundleURL.appendingPathComponent(bundleDirectory),
-            Bundle.module.bundleURL,
         ].compactMap { $0 }
     }
 }
